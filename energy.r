@@ -7,6 +7,26 @@ library(rnaturalearth)
 data <- read.csv("data/energy.csv")
 data <- data[data$Year == 2021, ]
 
+g <- c(
+    "Antarctica",
+    "Asia",
+    "America",
+    "CIS",
+    "Europe",
+    "Eastern Africa",
+    "Western Africa",
+    "income",
+    "Middle",
+    "OECD",
+    "USSR"
+)
+for (c in g){
+    data <- data[!grepl(c, data$Entity), ]
+}
+
+data <- data[data$Entity != "Africa", ]
+data <- data[data$Entity != "Africa (BP)", ]
+
 # TODO: Find a better way to do this
 data$Total.Consumption <- data$Other.Consumption +
     data$Biofuels.Consumption
@@ -40,13 +60,14 @@ data$Other.Share <- (data$Other.Consumption /
 data$Total.Share <- (data$Total.Consumption /
     data[data$Entity == "World", ]$Total.Consumption) * 100
 
+data <- data[!grepl("World", data$Entity), ]
+
 world <- ne_countries(
     scale = "large",
     type = "sovereignty",
     returnclass = "sf"
 )
 
-world <- world[!grepl("Antarctica", world$sovereignt), ]
 world$sovereignt[
     world$sovereignt == "United States of America"] <- "United States"
 
@@ -76,7 +97,7 @@ g <- ggplot(data = world) +
     scale_fill_viridis_c(
         option = "F",
         # trans = "sqrt"
-        trans = scales::pseudo_log_trans(sigma = 0.25)
+        trans = scales::pseudo_log_trans(sigma = 0.5)
     ) +
     xlab("Longitude") +
     ylab("Latitude") +
