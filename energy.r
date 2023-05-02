@@ -152,7 +152,7 @@ g <- ggplot(data = world) +
 plot(g)
 
 ggsave(
-    "imgs/energy_consumption_renewable_share.png",
+    "maps/energy_consumption_renewable_share.png",
     g,
     width = 15,
     height = 8,
